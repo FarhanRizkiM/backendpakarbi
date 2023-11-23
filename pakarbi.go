@@ -128,7 +128,7 @@ func GCFPostHandler(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collectionn
 	if err != nil {
 		Response.Message = "error parsing application/json: " + err.Error()
 	} else {
-		if IsPasswordValid(mconn, collectionname, datauser) {
+		if IsPasswordValid(mconn, collectionname, datauser.Email, datauser.NP, datauser.PasswordHash) {
 			Response.Status = true
 			tokenstring, err := watoken.Encode(datauser.Username, os.Getenv(PASETOPRIVATEKEYENV))
 			if err != nil {

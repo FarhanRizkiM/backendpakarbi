@@ -109,7 +109,9 @@ func FindUser(mongoconn *mongo.Database, collection string, userdata User) User 
 }
 
 func IsPasswordValid(mongoconn *mongo.Database, collection string, userdata User) bool {
-	filter := bson.M{"username": userdata.Username}
+	filter := bson.M{
+		"email": userdata.Email,
+		"npm":   userdata.NPM}
 	res := atdb.GetOneDoc[User](mongoconn, collection, filter)
 	return CheckPasswordHash(userdata.PasswordHash, res.PasswordHash)
 }
