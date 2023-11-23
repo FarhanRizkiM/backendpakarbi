@@ -69,7 +69,7 @@ func TestGeneratePrivateKeyPaseto(t *testing.T) {
 }
 
 func TestHashFunction(t *testing.T) {
-	mconn := SetConnection("MONGOSTRING", "dbpakarbi")
+	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
 	userdata.Username = "rizki"
 	userdata.PasswordHash = "testpass"
@@ -85,7 +85,7 @@ func TestHashFunction(t *testing.T) {
 }
 
 func TestIsPasswordValid(t *testing.T) {
-	mconn := SetConnection("MONGOSTRING", "dbpakarbi")
+	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
 	userdata.Username = "rizki"
 	userdata.PasswordHash = "testpass"
@@ -95,7 +95,7 @@ func TestIsPasswordValid(t *testing.T) {
 }
 
 func TestUserFix(t *testing.T) {
-	mconn := SetConnection("MONGOSTRING", "dbpakarbi")
+	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
 	userdata.Username = "pakarbi"
 	userdata.PasswordHash = "pakarbipass"
