@@ -12,6 +12,8 @@ import (
 func TestCreateNewUserRole(t *testing.T) {
 	var userdata User
 	userdata.Username = "pakarbi"
+	userdata.NPM = "1214020"
+	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
 	userdata.Role = "user"
 	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
@@ -28,6 +30,8 @@ func TestCreateNewUserRole(t *testing.T) {
 func CreateNewUserToken(t *testing.T) {
 	var userdata User
 	userdata.Username = "pakarbi"
+	userdata.NPM = "1214020"
+	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
 	userdata.Role = "user"
 
@@ -46,13 +50,15 @@ func TestGFCPostHandlerUser(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
 	userdata.Username = "pakarbi"
+	userdata.NPM = "1214020"
+	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
 	userdata.Role = "user"
 	CreateNewUserRole(mconn, "user", userdata)
 }
 
 func TestGeneratePasswordHash(t *testing.T) {
-	passwordhash := "testpass"
+	passwordhash := "pakarbipass"
 	hash, _ := HashPassword(passwordhash) // ignore error for the sake of simplicity
 
 	fmt.Println("Password:", passwordhash)
@@ -64,15 +70,15 @@ func TestGeneratePrivateKeyPaseto(t *testing.T) {
 	privateKey, publicKey := watoken.GenerateKey()
 	fmt.Println(privateKey)
 	fmt.Println(publicKey)
-	hasil, err := watoken.Encode("testpakarbi", privateKey)
+	hasil, err := watoken.Encode("pakarbipass", privateKey)
 	fmt.Println(hasil, err)
 }
 
 func TestHashFunction(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
-	userdata.Username = "rizki"
-	userdata.PasswordHash = "testpass"
+	userdata.Username = "pakarbi"
+	userdata.PasswordHash = "pakarbipass"
 
 	filter := bson.M{"username": userdata.Username}
 	res := atdb.GetOneDoc[User](mconn, "user", filter)
@@ -87,8 +93,8 @@ func TestHashFunction(t *testing.T) {
 func TestIsPasswordValid(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
-	userdata.Username = "rizki"
-	userdata.PasswordHash = "testpass"
+	userdata.Username = "pakarbi"
+	userdata.PasswordHash = "pakarbipass"
 
 	anu := IsPasswordValid(mconn, "user", userdata)
 	fmt.Println(anu)
@@ -98,6 +104,8 @@ func TestUserFix(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	var userdata User
 	userdata.Username = "pakarbi"
+	userdata.NPM = "1214020"
+	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
 	userdata.Role = "user"
 	CreateUser(mconn, "user", userdata)
