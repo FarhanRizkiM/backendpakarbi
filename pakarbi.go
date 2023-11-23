@@ -82,11 +82,11 @@ func GCFCreateHandler(MONGOCONNSTRINGENV, dbname, collectionname string, r *http
 	}
 
 	// Hash the password before storing it
-	hashedPassword, hashErr := HashPassword(datauser.Password)
+	hashedPassword, hashErr := HashPassword(datauser.PasswordHash)
 	if hashErr != nil {
 		return hashErr.Error()
 	}
-	datauser.Password = hashedPassword
+	datauser.PasswordHash = hashedPassword
 
 	createErr := CreateNewUserRole(mconn, collectionname, datauser)
 	fmt.Println(createErr)
@@ -94,7 +94,7 @@ func GCFCreateHandler(MONGOCONNSTRINGENV, dbname, collectionname string, r *http
 	return GCFReturnStruct(datauser)
 }
 
-func GCFRegisterUser(username, password, role, mongoConnectionString, dbName string) bool {
+func GCFRegisterUser(username, passwordhash, role, mongoConnectionString, dbName string) bool {
     // Menghubungkan ke database MongoDB
     client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoConnectionString))
     if err != nil {
@@ -115,7 +115,7 @@ func GCFRegisterUser(username, password, role, mongoConnectionString, dbName str
     }
 
     // Hash password menggunakan bcrypt sebelum menyimpannya ke database
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(passwordhash), bcrypt.DefaultCost)
     if err != nil {
         // Gagal hash password
         return false
@@ -124,7 +124,7 @@ func GCFRegisterUser(username, password, role, mongoConnectionString, dbName str
     // Data pengguna baru
     newUser := User{
         Username: username,
-        Password: string(hashedPassword),
+        PasswordHash: string(hashedPassword),
         Role:     role,
     }
 
@@ -201,7 +201,7 @@ func GCFReturnStruct(DataStuct any) string {
 	return string(jsondata)
 }
 
-func GCFLoginTest(username, password, MONGOCONNSTRINGENV, dbname, collectionname string) bool {
+func GCFLoginTest(username, passwordhash, MONGOCONNSTRINGENV, dbname, collectionname string) bool {
 	// Membuat koneksi ke MongoDB
 	mconn := SetConnection(MONGOCONNSTRINGENV, dbname)
 
@@ -216,7 +216,7 @@ func GCFLoginTest(username, password, MONGOCONNSTRINGENV, dbname, collectionname
 	}
 
 	// Memeriksa apakah kata sandi cocok
-	return CheckPasswordHash(password, res.Password)
+	return CheckPasswordHash(passwordhash, res.PasswordHash)
 }
 
 func Login(Privatekey, MongoEnv, dbname, Colname string, r *http.Request) string {
@@ -258,7 +258,7 @@ func RegisterUser(Mongoenv, dbname string, r *http.Request) string {
 		resp.Message = "error parsing application/json: " + err.Error()
 	} else {
 		resp.Status = true
-		hash, err := HashPassword(userdata.Password)
+		hash, err := HashPassword(userdata.PasswordHash)
 		if err != nil {
 			resp.Message = "Gagal Hash Password" + err.Error()
 		}
@@ -279,7 +279,7 @@ func RegisterAdmin(Mongoenv, dbname string, r *http.Request) string {
 		resp.Message = "error parsing application/json: " + err.Error()
 	} else {
 		resp.Status = true
-		hash, err := HashPassword(admindata.Password)
+		hash, err := HashPassword(admindata.PasswordHash)
 		if err != nil {
 			resp.Message = "Gagal Hash Password" + err.Error()
 		}
