@@ -174,7 +174,7 @@ func FindUser(mongoconn *mongo.Database, collection string, userdata User) User 
 func IsPasswordValid(mongoconn *mongo.Database, collection string, userdata User) bool {
 	filter := bson.M{"username": userdata.Username}
 	res := atdb.GetOneDoc[User](mongoconn, collection, filter)
-	return CheckPasswordHash(userdata.Password, res.Password)
+	return CheckPasswordHash(userdata.PasswordHash, res.PasswordHash)
 }
 
 func CreateUserAndAddToken(privateKeyEnv string, mongoconn *mongo.Database, collection string, userdata User) error {
