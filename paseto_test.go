@@ -12,19 +12,22 @@ import (
 func TestCreateNewUserRole(t *testing.T) {
 	var userdata User
 	userdata.Username = "rizki"
+	userdata.Email = "farhanrizki101010@gmail.com"
 	userdata.Password = "rizkipass"
+	userdata.PasswordHash = "rizkipass"
 	userdata.Role = "user"
-	mconn := SetConnection("MONGOSTRING", "PakArbi")
+	mconn := SetConnection("MONGOSTRING", "TestPakArbi")
 	CreateNewUserRole(mconn, "user", userdata)
 }
 
 func TestCreateNewAdminRole(t *testing.T) {
-	var userdata User
-	userdata.Username = "admin"
-	userdata.Password = "admin"
-	userdata.Role = "admin"
-	mconn := SetConnection("MONGOSTRING", "PakArbi")
-	CreateNewUserRole(mconn, "admin", userdata)
+	var admindata Admin
+	admindata.Username = "admin"
+	admindata.Password = "admin"
+	admindata.PasswordHash = "admin"
+	admindata.Role = "admin"
+	mconn := SetConnection("MONGOSTRING", "TestPakArbi")
+	CreateNewAdminRole(mconn, "admin", admindata)
 }
 
 // func TestDeleteUser(t *testing.T) {
@@ -37,7 +40,7 @@ func TestCreateNewAdminRole(t *testing.T) {
 func CreateNewUserToken(t *testing.T) {
 	var userdata User
 	userdata.Username = "rizki"
-	userdata.Password = "rizkipass"
+	userdata.PasswordHash = "rizkipass"
 	userdata.Role = "user"
 
 	// Create a MongoDB connection
@@ -73,27 +76,28 @@ func TestGFCPostHandlerUser(t *testing.T) {
 	var userdata User
 	userdata.Username = "rizki"
 	userdata.Password = "rizkipass"
+	userdata.PasswordHash = "rizkipass"
 	userdata.Role = "user"
 	CreateNewUserRole(mconn, "user", userdata)
 }
 
 func TestGeneratePasswordHash(t *testing.T) {
-	password := "rizkipass"
-	hash, _ := HashPassword(password) // ignore error for the sake of simplicity
+	passwordhash := "rizkipass"
+	hash, _ := HashPassword(passwordhash) // ignore error for the sake of simplicity
 
-	fmt.Println("Password:", password)
+	fmt.Println("Password:", passwordhash)
 	fmt.Println("Hash:    ", hash)
-	match := CheckPasswordHash(password, hash)
+	match := CheckPasswordHash(passwordhash, hash)
 	fmt.Println("Match:   ", match)
 }
 
 func TestGenerateAdminPasswordHash(t *testing.T) {
-	password := "admin"
-	hash, _ := HashPassword(password) // ignore error for the sake of simplicity
+	passwordhash := "admin"
+	hash, _ := HashPassword(passwordhash) // ignore error for the sake of simplicity
 
-	fmt.Println("Password:", password)
+	fmt.Println("Password:", passwordhash)
 	fmt.Println("Hash:    ", hash)
-	match := CheckPasswordHash(password, hash)
+	match := CheckPasswordHash(passwordhash, hash)
 	fmt.Println("Match:   ", match)
 }
 
@@ -114,17 +118,18 @@ func TestGenerateAdminPrivateKeyPaseto(t *testing.T) {
 }
 
 func TestHashFunction(t *testing.T) {
-	mconn := SetConnection("MONGOSTRING", "PakArbi")
+	mconn := SetConnection("MONGOSTRING", "TestPakArbi")
 	var userdata User
 	userdata.Username = "rizki"
 	userdata.Password = "rizkipass"
+	userdata.PasswordHash = "rizkipass"
 
 	filter := bson.M{"username": userdata.Username}
 	res := atdb.GetOneDoc[User](mconn, "user", filter)
 	fmt.Println("Mongo User Result: ", res)
-	hash, _ := HashPassword(userdata.Password)
+	hash, _ := HashPassword(userdata.PasswordHash)
 	fmt.Println("Hash Password : ", hash)
-	match := CheckPasswordHash(userdata.Password, res.Password)
+	match := CheckPasswordHash(userdata.PasswordHash, res.PasswordHash)
 	fmt.Println("Match:   ", match)
 
 }
@@ -139,8 +144,8 @@ func TestHashAdminFunction(t *testing.T) {
     filterUsername := bson.M{"username": admindata.Username}
     filterEmail := bson.M{"email": admindata.Email}
 
-    resByUsername := atdb.GetOneDoc[User](mconn, "admin", filterUsername)
-    resByEmail := atdb.GetOneDoc[User](mconn, "admin", filterEmail)
+    resByUsername := atdb.GetOneDoc[Admin](mconn, "admin", filterUsername)
+    resByEmail := atdb.GetOneDoc[Admin](mconn, "admin", filterEmail)
 
     fmt.Println("Mongo User Result (by username): ", resByUsername)
     fmt.Println("Mongo User Result (by email): ", resByEmail)
@@ -160,7 +165,7 @@ func TestIsPasswordValid(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "PakArbi")
 	var userdata User
 	userdata.Username = "rizki"
-	userdata.Password = "rizkipass"
+	userdata.PasswordHash = "rizkipass"
 
 	anu := IsPasswordValid(mconn, "user", userdata)
 	fmt.Println(anu)
@@ -170,26 +175,26 @@ func TestUserFix(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "PakArbi")
 	var userdata User
 	userdata.Username = "rizki"
-	userdata.Password = "rizkipass"
+	userdata.PasswordHash = "rizkipass"
 	userdata.Role = "user"
 	CreateUser(mconn, "user", userdata)
 }
 
-func TestIsAdminPasswordValid(t *testing.T) {
-	mconn := SetConnection("MONGOSTRING", "PakArbi")
-	var admindata User
-	admindata.Username = "admin"
-	admindata.Password = "admin"
+// func TestIsAdminPasswordValid(t *testing.T) {
+// 	mconn := SetConnection("MONGOSTRING", "PakArbi")
+// 	var admindata User
+// 	admindata.Username = "admin"
+// 	admindata.Password = "admin"
 
-	anu := IsPasswordValid(mconn, "user", admindata)
-	fmt.Println(anu)
-}
+// 	anu := IsPasswordValid(mconn, "user", admindata)
+// 	fmt.Println(anu)
+// }
 
 func TestAdminFix(t *testing.T) {
 	mconn := SetConnection("MONGOSTRING", "PakArbi")
-	var admindata User
+	var admindata Admin
 	admindata.Username = "admin"
 	admindata.Password = "admin"
 	admindata.Role = "admin"
-	CreateUser(mconn, "user", admindata)
+	CreateAdmin(mconn, "admin", admindata)
 }

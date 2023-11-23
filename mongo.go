@@ -91,14 +91,26 @@ func GetNameAndPassowrd(mongoconn *mongo.Database, collection string) []User {
 
 func CreateNewUserRole(mongoconn *mongo.Database, collection string, userdata User) interface{} {
 	// Hash the password before storing it
-	hashedPassword, err := HashPassword(userdata.Password)
+	hashedPassword, err := HashPassword(userdata.PasswordHash)
 	if err != nil {
 		return err
 	}
-	userdata.Password = hashedPassword
+	userdata.PasswordHash = hashedPassword
 
 	// Insert the user data into the database
 	return atdb.InsertOneDoc(mongoconn, collection, userdata)
+}
+
+func CreateNewAdminRole(mongoconn *mongo.Database, collection string, admindata Admin) interface{} {
+	// Hash the password before storing it
+	hashedPassword, err := HashPassword(admindata.PasswordHash)
+	if err != nil {
+		return err
+	}
+	admindata.PasswordHash = hashedPassword
+
+	// Insert the user data into the database
+	return atdb.InsertOneDoc(mongoconn, collection, admindata)
 }
 
 func CreateUserAndAddedToeken(PASETOPRIVATEKEYENV string, mongoconn *mongo.Database, collection string, userdata User) interface{} {
