@@ -128,9 +128,11 @@ func GCFPostHandler(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collectionn
 	if err != nil {
 		Response.Message = "error parsing application/json: " + err.Error()
 	} else {
-		if IsPasswordValid(mconn, collectionname, datauser.Email, datauser.NP, datauser.PasswordHash) {
+		// Assuming either email or npm is provided in the request
+		if IsPasswordValid(mconn, collectionname, datauser) {
 			Response.Status = true
-			tokenstring, err := watoken.Encode(datauser.Username, os.Getenv(PASETOPRIVATEKEYENV))
+			// Using NPM as identifier, you can modify this as needed
+			tokenstring, err := watoken.Encode(datauser.NPM, os.Getenv(PASETOPRIVATEKEYENV))
 			if err != nil {
 				Response.Message = "Gagal Encode Token : " + err.Error()
 			} else {
@@ -138,12 +140,14 @@ func GCFPostHandler(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collectionn
 				Response.Token = tokenstring
 			}
 		} else {
-			Response.Message = "Password Salah"
+			Response.Message = "NPM atau Email atau Password Salah"
 		}
 	}
 
 	return GCFReturnStruct(Response)
 }
+
+
 
 func GCFReturnStruct(DataStuct any) string {
 	jsondata, _ := json.Marshal(DataStuct)

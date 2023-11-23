@@ -109,12 +109,23 @@ func FindUser(mongoconn *mongo.Database, collection string, userdata User) User 
 }
 
 func IsPasswordValid(mongoconn *mongo.Database, collection string, userdata User) bool {
-	filter := bson.M{
-		"email": userdata.Email,
-		"npm":   userdata.NPM}
-	res := atdb.GetOneDoc[User](mongoconn, collection, filter)
-	return CheckPasswordHash(userdata.PasswordHash, res.PasswordHash)
+    filter := bson.M{
+        "$or": []bson.M{
+            {"npm": userdata.NPM},
+            {"email": userdata.Email},
+        },
+    }
+
+    var res User
+    err := mongoconn.Collection(collection).FindOne(context.TODO(), filter).Decode(&res)
+
+    if err == nil {
+        // Mengasumsikan res.PasswordHash adalah password terenkripsi yang tersimpan di database
+        return CheckPasswordHash(userdata.PasswordHash, res.PasswordHash)
+    }
+    return false
 }
+
 
 func CreateUserAndAddToken(privateKeyEnv string, mongoconn *mongo.Database, collection string, userdata User) error {
 	// Hash the password before storing it

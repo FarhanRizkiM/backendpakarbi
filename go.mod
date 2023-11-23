@@ -1,6 +1,6 @@
 module github.com/FarhanRizkiM/backendpakarbi
 
-go 1.21.4
+go 1.20
 
 require (
 	github.com/aiteung/atdb v0.1.3
