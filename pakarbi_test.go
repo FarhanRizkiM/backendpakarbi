@@ -15,6 +15,7 @@ func TestCreateNewUserRole(t *testing.T) {
 	userdata.NPM = "1214020"
 	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
+	userdata.Email = "pakarbi2023@gmail.com"
 	userdata.Role = "user"
 	mconn := SetConnection("MONGOSTRING", "pakarbidbmongo")
 	CreateNewUserRole(mconn, "user", userdata)
@@ -33,6 +34,7 @@ func CreateNewUserToken(t *testing.T) {
 	userdata.NPM = "1214020"
 	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
+	userdata.Email = "pakarbi2023@gmail.com"
 	userdata.Role = "user"
 
 	// Create a MongoDB connection
@@ -53,6 +55,7 @@ func TestGFCPostHandlerUser(t *testing.T) {
 	userdata.NPM = "1214020"
 	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
+	userdata.Email = "pakarbi2023@gmail.com"
 	userdata.Role = "user"
 	CreateNewUserRole(mconn, "user", userdata)
 }
@@ -107,6 +110,7 @@ func TestUserFix(t *testing.T) {
 	userdata.NPM = "1214020"
 	userdata.Password = "pakarbipass"
 	userdata.PasswordHash = "pakarbipass"
+	userdata.Email = "pakarbi2023@gmail.com"
 	userdata.Role = "user"
 	CreateUser(mconn, "user", userdata)
 }
