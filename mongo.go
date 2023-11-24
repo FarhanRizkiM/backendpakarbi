@@ -152,9 +152,12 @@ func CreateUserAndAddToken(privateKeyEnv string, mongoconn *mongo.Database, coll
 	return nil
 }
 
-func InsertUserdata(MongoConn *mongo.Database, username, role, passwordhash string) (InsertedID interface{}) {
+func InsertUserdata(MongoConn *mongo.Database, username, npm, email, password, passwordhash, role string) (InsertedID interface{}) {
 	req := new(User)
 	req.Username = username
+	req.NPM = npm
+	req.Email = email
+	req.Password = password 
 	req.PasswordHash = passwordhash
 	req.Role = role
 	return InsertOneDoc(MongoConn, "user", req)

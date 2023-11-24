@@ -147,8 +147,6 @@ func GCFPostHandler(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collectionn
 	return GCFReturnStruct(Response)
 }
 
-
-
 func GCFReturnStruct(DataStuct any) string {
 	jsondata, _ := json.Marshal(DataStuct)
 	return string(jsondata)
@@ -215,7 +213,7 @@ func Register(Mongoenv, dbname string, r *http.Request) string {
 		if err != nil {
 			resp.Message = "Gagal Hash Password" + err.Error()
 		}
-		InsertUserdata(conn, userdata.Username, userdata.Role, hash)
+		InsertUserdata(conn, userdata.Username, userdata.NPM, userdata.Email, userdata.Password, userdata.Role, hash)
 		resp.Message = "Berhasil Input data"
 	}
 	response := ReturnStringStruct(resp)
