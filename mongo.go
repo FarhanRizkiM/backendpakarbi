@@ -126,6 +126,24 @@ func IsPasswordValid(mongoconn *mongo.Database, collection string, userdata User
     return false
 }
 
+func IsPasswordValidEmail(mongoconn *mongo.Database, collection string, userdata User) bool {
+    filter := bson.M{
+        "$or": []bson.M{
+            {"email": userdata.Email},
+            {"npm": userdata.NPM},
+        },
+    }
+
+    var res User
+    err := mongoconn.Collection(collection).FindOne(context.TODO(), filter).Decode(&res)
+
+    if err == nil {
+        // Mengasumsikan res.PasswordHash adalah password terenkripsi yang tersimpan di database
+        return CheckPasswordHash(userdata.PasswordHash, res.PasswordHash)
+    }
+    return false
+}
+
 
 func CreateUserAndAddToken(privateKeyEnv string, mongoconn *mongo.Database, collection string, userdata User) error {
 	// Hash the password before storing it

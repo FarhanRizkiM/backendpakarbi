@@ -157,7 +157,7 @@ func GCFPostHandlerEmail(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collec
 		Response.Message = "error parsing application/json: " + err.Error()
 	} else {
 		// Assuming either email or npm is provided in the request
-		if IsPasswordValid(mconn, collectionname, datauser) {
+		if IsPasswordValidEmail(mconn, collectionname, datauser) {
 			Response.Status = true
 			// Using NPM as identifier, you can modify this as needed
 			tokenstring, err := watoken.Encode(datauser.Email, os.Getenv(PASETOPRIVATEKEYENV))
