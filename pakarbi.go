@@ -213,7 +213,7 @@ func Register(Mongoenv, dbname string, r *http.Request) string {
 		if err != nil {
 			resp.Message = "Gagal Hash Password" + err.Error()
 		}
-		InsertUserdata(conn, userdata.Username, userdata.NPM, userdata.Email, userdata.Password, userdata.Role, hash)
+		InsertUserdata(conn, userdata.Username, userdata.NPM, userdata.Email, userdata.Password, hash, userdata.Role)
 		resp.Message = "Berhasil Input data"
 	}
 	response := ReturnStringStruct(resp)
