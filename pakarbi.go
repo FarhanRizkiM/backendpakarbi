@@ -140,7 +140,35 @@ func GCFPostHandler(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collectionn
 				Response.Token = tokenstring
 			}
 		} else {
-			Response.Message = "NPM atau Email atau Password Salah"
+			Response.Message = "NPM atau Password Salah"
+		}
+	}
+
+	return GCFReturnStruct(Response)
+}
+
+func GCFPostHandlerEmail(PASETOPRIVATEKEYENV, MONGOCONNSTRINGENV, dbname, collectionname string, r *http.Request) string {
+	var Response Credential
+	Response.Status = false
+	mconn := SetConnection(MONGOCONNSTRINGENV, dbname)
+	var datauser User
+	err := json.NewDecoder(r.Body).Decode(&datauser)
+	if err != nil {
+		Response.Message = "error parsing application/json: " + err.Error()
+	} else {
+		// Assuming either email or npm is provided in the request
+		if IsPasswordValid(mconn, collectionname, datauser) {
+			Response.Status = true
+			// Using NPM as identifier, you can modify this as needed
+			tokenstring, err := watoken.Encode(datauser.Email, os.Getenv(PASETOPRIVATEKEYENV))
+			if err != nil {
+				Response.Message = "Gagal Encode Token : " + err.Error()
+			} else {
+				Response.Message = "Selamat Datang"
+				Response.Token = tokenstring
+			}
+		} else {
+			Response.Message = "Email atau Password Salah"
 		}
 	}
 
